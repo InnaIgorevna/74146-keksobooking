@@ -47,11 +47,11 @@ function getRandom(min, max) {
 }
 // Возвращает рандомный элемет массива
 function getRandomArrayElement(arr) {
-  return arr[getRandom(0, arr.length - 1)];
+  return arr[getRandom(0, arr.length)];
 }
 // Возвращаем массив удобст(FEATURES) квартиры, в рандомном количестве
 function getRandomFeatures() {
-  var rand = getRandom(0, FEATURES.length);
+  var rand = getRandom(0, FEATURES.length + 1);
   var feat = [];
   var cur = 0;
   while (cur < rand) {
@@ -67,8 +67,8 @@ function getRandomFeatures() {
 function createOffers() {
   var arr = [];
   for (var i = 0; i < OFFER_COUNT; i++) {
-    var x = getRandom(MIN_X, MAX_X);
-    var y = getRandom(MIN_Y, MAX_Y);
+    var x = getRandom(MIN_X, MAX_X + 1);
+    var y = getRandom(MIN_Y, MAX_Y + 1);
     arr.push({
       author: {
         avatar: 'img/avatars/user0' + (i + 1) + '.png'
@@ -76,10 +76,10 @@ function createOffers() {
       offer: {
         title: TITLES[i],
         address: x + ', ' + y,
-        price: getRandom(MIN_PRICE, MAX_PRICE),
+        price: getRandom(MIN_PRICE, MAX_PRICE + 1),
         type: getRandomArrayElement(TYPES),
-        rooms: getRandom(1, MAX_ROOM_COUNT),
-        guests: getRandom(1, MAX_GUEST_COUNT),
+        rooms: getRandom(1, MAX_ROOM_COUNT + 1),
+        guests: getRandom(1, MAX_GUEST_COUNT + 1),
         checkin: getRandomArrayElement(TIMES),
         checkout: getRandomArrayElement(TIMES),
         features: getRandomFeatures(),
@@ -101,7 +101,7 @@ function createPin(x, y, src) {
   var pinHeight = 75;
   pin.className = 'pin';
   pin.style = 'left:' + (x + pinWidth / 2) + 'px; top:' + (y + pinHeight) + 'px';
-  pin.innerHTML = '<img src="' + src + '" class="rounded" width="40" height="40">';
+  pin.innerHTML = '<img src="' + src + '" class="rounded">';
   return pin;
 }
 // Мы пробегаем по массиву с объявлениями квартиры, получаем pin с нужными данными. Накапливаем во фрагменте(буфере) пины,
@@ -118,35 +118,37 @@ function showPins(offers) {
 function getGuestRoomString(guests, rooms) {
   var guestsString;
   var roomsString;
+  var dict = {
+    guest: {
+      single: 'гостя',
+      plural: 'гостей'
+    },
+    room: {
+      single: 'комнате',
+      plural: 'комнатах'
+    }
+  };
+
   if (guests === 1) {
-    guestsString = 'гостя';
+    guestsString = dict.guest.single;
   } else {
-    guestsString = 'гостей';
+    guestsString = dict.guest.plural;
   }
   if (rooms === 1) {
-    roomsString = 'комнате';
+    roomsString = dict.room.single;
   } else {
-    roomsString = 'комнатах';
+    roomsString = dict.room.plural;
   }
   return 'Для ' + guests + ' ' + guestsString + ' в ' + rooms + ' ' + roomsString;
 }
 // Возвращает наименование типа на русском языке
 function getLodgeTypeName(typeLodge) {
-  var nameLodge = '';
-  switch (typeLodge) {
-    case 'flat':
-      nameLodge = 'Квартира';
-      break;
-    case 'house':
-      nameLodge = 'Дом';
-      break;
-    case 'bungalo':
-      nameLodge = 'Бунгало';
-      break;
-    default:
-      nameLodge = 'Неизвестный тип';
-  }
-  return nameLodge;
+  var dict = {
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало'
+  };
+  return dict[typeLodge];
 }
 // Возвращает блок информации о квартире с заполнеными данными
 function getLodgeInfoDialog(lodge) {
