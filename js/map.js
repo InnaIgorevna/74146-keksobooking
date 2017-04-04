@@ -32,15 +32,7 @@ var FEATURES = [
   'conditioner'
 ];
 
-var OFFER_COUNT = 8;
-var MAX_GUEST_COUNT = 8;
-var MAX_ROOM_COUNT = 5;
-var MIN_PRICE = 1000;
-var MAX_PRICE = 1000000;
-var MIN_X = 300;
-var MAX_X = 900;
-var MIN_Y = 100;
-var MAX_Y = 500;
+
 // Возвращает рандомное целое число oт min до max
 function getRandom(min, max) {
   return Math.floor(min + Math.random() * (max - min));
@@ -50,12 +42,12 @@ function getRandomArrayElement(arr) {
   return arr[getRandom(0, arr.length)];
 }
 // Возвращаем массив удобст(FEATURES) квартиры, в рандомном количестве
-function getRandomFeatures() {
-  var rand = getRandom(0, FEATURES.length + 1);
+function getRandomFeatures(arr) {
+  var rand = getRandom(0, arr.length + 1);
   var feat = [];
   var cur = 0;
   while (cur < rand) {
-    var f = getRandomArrayElement(FEATURES);
+    var f = getRandomArrayElement(arr);
     if (feat.indexOf(f) === -1) {
       feat.push(f);
       cur++;
@@ -65,6 +57,15 @@ function getRandomFeatures() {
 }
 // Возвращает массив объектов объявления о сдачи квартиры
 function createOffers() {
+  var OFFER_COUNT = 8;
+  var MAX_GUEST_COUNT = 8;
+  var MAX_ROOM_COUNT = 5;
+  var MIN_PRICE = 1000;
+  var MAX_PRICE = 1000000;
+  var MIN_X = 300;
+  var MAX_X = 900;
+  var MIN_Y = 100;
+  var MAX_Y = 500;
   var arr = [];
   for (var i = 0; i < OFFER_COUNT; i++) {
     var x = getRandom(MIN_X, MAX_X + 1);
@@ -82,7 +83,7 @@ function createOffers() {
         guests: getRandom(1, MAX_GUEST_COUNT + 1),
         checkin: getRandomArrayElement(TIMES),
         checkout: getRandomArrayElement(TIMES),
-        features: getRandomFeatures(),
+        features: getRandomFeatures(FEATURES),
         description: '',
         photos: []
       },
