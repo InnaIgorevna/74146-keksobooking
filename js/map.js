@@ -96,13 +96,14 @@ function createOffers() {
   return arr;
 }
 // Возращаем <div class"pin"></div> c внутренними данными
-function createPin(x, y, src) {
+function createPin(x, y, src, id) {
   var pin = document.createElement('div');
   var pinWidth = 56;
   var pinHeight = 75;
   pin.className = 'pin';
   pin.style = 'left:' + (x + pinWidth / 2) + 'px; top:' + (y + pinHeight) + 'px';
-  pin.innerHTML = '<img src="' + src + '" class="rounded">';
+  pin.innerHTML = '<img src="' + src + '" class="rounded" tabindex="0">';
+  pin.setAttribute('data-id', id);
   return pin;
 }
 // Мы пробегаем по массиву с объявлениями квартиры, получаем pin с нужными данными. Накапливаем во фрагменте(буфере) пины,
@@ -111,7 +112,7 @@ function showPins(offers) {
   var pinMap = document.querySelector('.tokyo__pin-map');
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(createPin(offers[i].location.x, offers[i].location.y, offers[i].author.avatar));
+    fragment.appendChild(createPin(offers[i].location.x, offers[i].location.y, offers[i].author.avatar, i));
   }
   pinMap.appendChild(fragment);
 }
@@ -129,7 +130,6 @@ function getGuestRoomString(guests, rooms) {
       plural: 'комнатах'
     }
   };
-
   if (guests === 1) {
     guestsString = dict.guest.single;
   } else {
@@ -174,8 +174,68 @@ function showLodgeInfo(lodge) {
   offerDialog.removeChild(offerDialog.querySelector('.dialog__panel'));
   offerDialog.appendChild(getLodgeInfoDialog(lodge));
   offerDialog.querySelector('.dialog__title img').src = lodge.author.avatar;
+  showDialog();
 }
-
 var offers = createOffers();
+var pinMap = document.querySelector('.tokyo');
+var activePin;
+function activatePin(elem) {
+  // Проверяем если у нас есть активированый пин - деактивируем его
+  if (activePin) {
+    deactivatePin();
+  }
+  // Новому pin ставим класс pin--active
+  elem.classList.add('pin--active');
+  activePin = elem;
+  // Отображаем левый блок с информацией объявления выбранного pin
+  showLodgeInfo(offers[activePin.getAttribute('data-id')]);
+}
+pinMap.addEventListener('click', function (evt) {
+  // Отслеживаем клик на блок .pin или на блок у родителя которого есть класс pin
+  if (evt.target.classList.contains('pin') || evt.target.parentNode.classList.contains('pin')) {
+    if (evt.target.classList.contains('pin')) {
+      activatePin(evt.target);
+    } else {
+      activatePin(evt.target.parentNode);
+    }
+  }
+});
+var dialog = document.querySelector('.dialog');
+var dialogClose = dialog.querySelector('.dialog__close');
+dialogClose.addEventListener('click', function () {
+  hideDialog();
+});
+function deactivatePin() {
+  activePin.classList.remove('pin--active');
+}
+// Закрываем блок dialog
+function hideDialog() {
+  document.querySelector('.dialog').classList.add('hidden');
+  deactivatePin();
+}
+var ESC_KEY_CODE = 27;
+var ENTER_KEY_CODE = 13;
+// Показываем блок dialog, добавляем обработчик событий на нажатие Esc
+function showDialog() {
+  document.querySelector('.dialog').classList.remove('hidden');
+  document.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ESC_KEY_CODE) {
+      hideDialog();
+    }
+  });
+}
+// добавляем обработчик событий на крестик диалога нажатие ENTER
+dialogClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEY_CODE) {
+    hideDialog();
+  }
+});
+// добавляем обработчик событий на карту.Если нажат ENTER на картинке пина - активируем пин
+pinMap.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEY_CODE && evt.target.parentNode.classList.contains('pin')) {
+    activatePin(evt.target.parentNode);
+  }
+});
 showPins(offers);
-showLodgeInfo(offers[0]);
+// Активируем первый пин
+activatePin(document.querySelector('.pin[data-id="0"]'));
