@@ -250,14 +250,15 @@ var housingPrice = document.querySelector('#price');
 var roomNumber = document.querySelector('#room_number');
 var capacity = document.querySelector('#capacity');
 // При выборе квартиры устанавливаю минимальную цену в зависимости от выбора жилья
-housingType.addEventListener('change', function () {
+function setMinPrice() {
   var minPrice = {
     flat: 1000,
     house: 10000,
     bungalo: 0
   };
   housingPrice.setAttribute('min', minPrice[housingType.value]);
-});
+}
+housingType.addEventListener('change', setMinPrice);
 // Сравниваю количество комнат с количеством гостей
 roomNumber.addEventListener('change', function () {
   if (roomNumber.value === '1') {
