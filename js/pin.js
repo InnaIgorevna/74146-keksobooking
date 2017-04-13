@@ -1,7 +1,7 @@
 'use strict';
-(function () {
+window.pin = (function () {
 // Возращаем <div class"pin"></div> c внутренними данными
-  window.createPin = function (x, y, src, id) {
+  var createPin = function (x, y, src, id) {
     var pin = document.createElement('div');
     var pinWidth = 56;
     var pinHeight = 75;
@@ -11,18 +11,24 @@
     pin.setAttribute('data-id', id);
     return pin;
   };
-  window.getActivePin = function () {
+  var getActivePin = function () {
     return document.querySelector('.pin--active');
   };
-  window.activatePin = function (elem) {
+  var activatePin = function (elem) {
     // деактивируем активный пин
-    window.deactivatePin();
+    deactivatePin();
     // Новому pin ставим класс pin--active
     elem.classList.add('pin--active');
   };
-  window.deactivatePin = function () {
-    if (window.getActivePin()) {
-      window.getActivePin().classList.remove('pin--active');
+  var deactivatePin = function () {
+    if (getActivePin()) {
+      getActivePin().classList.remove('pin--active');
     }
+  };
+  return {
+    createPin: createPin,
+    getActivePin: getActivePin,
+    activatePin: activatePin,
+    deactivatePin: deactivatePin
   };
 })();

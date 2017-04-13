@@ -1,5 +1,5 @@
 'use strict';
-(function () {
+window.showLodgeInfo = (function () {
   // Возвращает строчку в правильном склонении
   function getGuestRoomString(guests, rooms) {
     var guestsString;
@@ -53,7 +53,7 @@
     return lodgeInfoElement;
   }
 // Показываем блок информации о квартире
-  window.showLodgeInfo = function (lodge) {
+  var showLodgeInfo = function (lodge) {
     var offerDialog = document.querySelector('#offer-dialog');
     offerDialog.removeChild(offerDialog.querySelector('.dialog__panel'));
     offerDialog.appendChild(getLodgeInfoDialog(lodge));
@@ -68,21 +68,22 @@
 // Закрываем блок dialog
   function hideDialog() {
     document.querySelector('.dialog').classList.add('hidden');
-    window.deactivatePin();
+    window.pin.deactivatePin();
   }
 // Показываем блок dialog, добавляем обработчик событий на нажатие Esc
   function showDialog() {
     document.querySelector('.dialog').classList.remove('hidden');
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.ESC_KEY_CODE) {
+      if (evt.keyCode === window.offers.ESC_KEY_CODE) {
         hideDialog();
       }
     });
   }
 // добавляем обработчик событий на крестик диалога нажатие ENTER
   dialogClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.ENTER_KEY_CODE) {
+    if (evt.keyCode === window.offers.ENTER_KEY_CODE) {
       hideDialog();
     }
   });
+  return showLodgeInfo;
 })();

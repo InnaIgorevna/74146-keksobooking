@@ -1,7 +1,7 @@
 'use strict';
-(function () {
-  window.ESC_KEY_CODE = 27;
-  window.ENTER_KEY_CODE = 13;
+window.offers = (function () {
+  var ESC_KEY_CODE = 27;
+  var ENTER_KEY_CODE = 13;
   var TITLES = [
     'Большая уютная квартира',
     'Маленькая неуютная квартира',
@@ -31,20 +31,20 @@
     'conditioner'
   ];
   // Возвращает рандомное целое число oт min до max
-  window.getRandom = function (min, max) {
+  var getRandom = function (min, max) {
     return Math.floor(min + Math.random() * (max - min));
   };
 // Возвращает рандомный элемет массива
-  window.getRandomArrayElement = function (arr) {
-    return arr[window.getRandom(0, arr.length)];
+  var getRandomArrayElement = function (arr) {
+    return arr[getRandom(0, arr.length)];
   };
   // Возвращаем массив удобст(FEATURES) квартиры, в рандомном количестве
   function getRandomFeatures(arr) {
-    var rand = window.getRandom(0, arr.length + 1);
+    var rand = getRandom(0, arr.length + 1);
     var feat = [];
     var cur = 0;
     while (cur < rand) {
-      var f = window.getRandomArrayElement(arr);
+      var f = getRandomArrayElement(arr);
       if (feat.indexOf(f) === -1) {
         feat.push(f);
         cur++;
@@ -64,8 +64,8 @@
   var MAX_Y = 500;
   var arr = [];
   for (var i = 0; i < OFFER_COUNT; i++) {
-    var x = window.getRandom(MIN_X, MAX_X + 1);
-    var y = window.getRandom(MIN_Y, MAX_Y + 1);
+    var x = getRandom(MIN_X, MAX_X + 1);
+    var y = getRandom(MIN_Y, MAX_Y + 1);
     arr.push({
       author: {
         avatar: 'img/avatars/user0' + (i + 1) + '.png'
@@ -73,12 +73,12 @@
       offer: {
         title: TITLES[i],
         address: x + ', ' + y,
-        price: window.getRandom(MIN_PRICE, MAX_PRICE + 1),
-        type: window.getRandomArrayElement(TYPES),
-        rooms: window.getRandom(1, MAX_ROOM_COUNT + 1),
-        guests: window.getRandom(1, MAX_GUEST_COUNT + 1),
-        checkin: window.getRandomArrayElement(TIMES),
-        checkout: window.getRandomArrayElement(TIMES),
+        price: getRandom(MIN_PRICE, MAX_PRICE + 1),
+        type: getRandomArrayElement(TYPES),
+        rooms: getRandom(1, MAX_ROOM_COUNT + 1),
+        guests: getRandom(1, MAX_GUEST_COUNT + 1),
+        checkin: getRandomArrayElement(TIMES),
+        checkout: getRandomArrayElement(TIMES),
         features: getRandomFeatures(FEATURES),
         description: '',
         photos: []
@@ -89,5 +89,11 @@
       }
     });
   }
-  window.offers = arr;
+  return {
+    ESC_KEY_CODE: ESC_KEY_CODE,
+    ENTER_KEY_CODE: ENTER_KEY_CODE,
+    getRandom: getRandom,
+    getRandomArrayElement: getRandomArrayElement,
+    data: arr
+  };
 })();
