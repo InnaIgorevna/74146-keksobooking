@@ -1,5 +1,5 @@
 'use strict';
-window.showLodgeInfo = (function () {
+window.card = (function () {
   // Возвращает строчку в правильном склонении
   function getGuestRoomString(guests, rooms) {
     var guestsString;
@@ -85,5 +85,8 @@ window.showLodgeInfo = (function () {
       hideDialog();
     }
   });
-  return showLodgeInfo;
+  return {
+    showLodgeInfo: showLodgeInfo,
+    hideDialog: hideDialog
+  };
 })();
