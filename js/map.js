@@ -13,7 +13,7 @@
   function activatePinAndShowInfo(pin) {
     window.pin.activatePin(pin);
     // Отображаем левый блок с информацией объявления выбранного pin
-    window.showLodgeInfo(window.offers.data[window.pin.getActivePin().getAttribute('data-id')]);
+    window.card.showLodgeInfo(window.offers.data[window.pin.getActivePin().getAttribute('data-id')]);
   }
   // добавляем обработчик событий на карту.Если нажат ENTER на картинке пина - активируем пин
   pinMap.addEventListener('keydown', function (evt) {
@@ -31,5 +31,48 @@
         activatePinAndShowInfo(evt.target.parentNode);
       }
     }
+  });
+  var mainPinWidth = 74;
+  var mainPinHeight = 94;
+  var mainPin = document.querySelector('.pin__main');
+  mainPin.addEventListener('mousedown', function (evt) {
+    window.card.hideDialog();
+    evt.preventDefault();
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+      var y = mainPin.offsetTop - shift.y;
+      var x = mainPin.offsetLeft - shift.x;
+      var mainPinPikeX = x + mainPinWidth / 2;
+      var mainPinPikeY = y + mainPinHeight;
+      var maxMapX = 1200;
+      var maxMapY = 665;
+      if (mainPinPikeX > 0 && mainPinPikeX < maxMapX) {
+        mainPin.style.left = x + 'px';
+      }
+      if (mainPinPikeY > 0 && mainPinPikeY < maxMapY) {
+        mainPin.style.top = y + 'px';
+      }
+      window.mainOffer.setAddress(mainPinPikeX, mainPinPikeY);
+    };
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 })();

@@ -1,5 +1,5 @@
 'use strict';
-(function () {
+window.mainOffer = (function () {
   // При изменении времени заезда устанавливаю время выезда
   var selectCheckin = document.querySelector('#time');
   var selectCheckout = document.querySelector('#timeout');
@@ -29,4 +29,12 @@
       capacity.value = 3;
     }
   }
+  // Адрес
+  function setAddress(x, y) {
+    var address = document.querySelector('#address');
+    address.value = 'x: ' + x + ', y: ' + y;
+  }
+  return {
+    setAddress: setAddress
+  };
 })();
