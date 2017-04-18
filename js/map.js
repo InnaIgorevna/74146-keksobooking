@@ -13,7 +13,7 @@
   function activatePinAndShowInfo(pin) {
     window.pin.activatePin(pin);
     // Отображаем левый блок с информацией объявления выбранного pin
-    window.card.showLodgeInfo(window.offers.data[window.pin.getActivePin().getAttribute('data-id')]);
+    window.card.showDialog(window.offers.data[window.pin.getActivePin().getAttribute('data-id')]);
   }
   // добавляем обработчик событий на карту.Если нажат ENTER на картинке пина - активируем пин
   pinMap.addEventListener('keydown', function (evt) {
