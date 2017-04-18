@@ -53,40 +53,29 @@ window.card = (function () {
     return lodgeInfoElement;
   }
 // Показываем блок информации о квартире
-  var showLodgeInfo = function (lodge) {
+  function showLodgeInfo(lodge) {
     var offerDialog = document.querySelector('#offer-dialog');
     offerDialog.removeChild(offerDialog.querySelector('.dialog__panel'));
     offerDialog.appendChild(getLodgeInfoDialog(lodge));
     offerDialog.querySelector('.dialog__title img').src = lodge.author.avatar;
-    showDialog();
-  };
-  var dialog = document.querySelector('.dialog');
-  var dialogClose = dialog.querySelector('.dialog__close');
-  dialogClose.addEventListener('click', function () {
-    hideDialog();
-  });
+  }
 // Закрываем блок dialog
   function hideDialog() {
     document.querySelector('.dialog').classList.add('hidden');
     window.pin.deactivatePin();
   }
-// Показываем блок dialog, добавляем обработчик событий на нажатие Esc
-  function showDialog() {
+  function openDialog() {
     document.querySelector('.dialog').classList.remove('hidden');
-    document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === window.offers.ESC_KEY_CODE) {
-        hideDialog();
-      }
-    });
   }
-// добавляем обработчик событий на крестик диалога нажатие ENTER
-  dialogClose.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.offers.ENTER_KEY_CODE) {
-      hideDialog();
-    }
-  });
+// Показываем блок dialog, добавляем обработчик событий на нажатие Esc
+  function showDialog(lodge) {
+    var dialog = document.querySelector('.dialog');
+    var dialogClose = dialog.querySelector('.dialog__close');
+    showLodgeInfo(lodge);
+    window.showCard(dialog, openDialog, hideDialog, dialogClose);
+  }
   return {
-    showLodgeInfo: showLodgeInfo,
+    showDialog: showDialog,
     hideDialog: hideDialog
   };
 })();
