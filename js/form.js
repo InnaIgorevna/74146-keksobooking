@@ -19,6 +19,7 @@ window.mainOffer = (function () {
     element.min = value;
   };
   window.synchronizeFields(selectCheckin, TIMES, selectCheckout, TIMES, syncValues);
+  window.synchronizeFields(selectCheckout, TIMES, selectCheckin, TIMES, syncValues);
   window.synchronizeFields(roomNumber, ROOM_NUMBERS, capacity, GUEST_CAPACITY, syncValues);
   window.synchronizeFields(housingType, TYPES, housingPrice, HOUSE_PRICES, syncValueWithMin);
   function setAddress(x, y) {

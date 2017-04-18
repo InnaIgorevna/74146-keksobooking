@@ -64,9 +64,9 @@ window.card = (function () {
     document.querySelector('.dialog').classList.add('hidden');
     window.pin.deactivatePin();
   }
-  var openDialog = function () {
+  function openDialog() {
     document.querySelector('.dialog').classList.remove('hidden');
-  };
+  }
 // Показываем блок dialog, добавляем обработчик событий на нажатие Esc
   function showDialog(lodge) {
     var dialog = document.querySelector('.dialog');
