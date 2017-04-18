@@ -658,6 +658,20 @@ select option:hover {
     border-radius: 50%;
 }
 
+.response-error-text{
+  position: absolute;
+  z-index: 1000;
+  padding: 50px;
+  top: 300px;
+  left: 400px;
+  font-size: 35px;
+  font-weight: 700;
+  background: #fff;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid #343434;
+}
+
 .hidden{
   display: none;
 }
