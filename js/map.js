@@ -37,7 +37,6 @@
         .filter(HousingPriceFilter)
         .filter(HousingFeaturesFilter);
     }
-
     function HousingTypeFilter(offer) {
       return (housingTypeElem.value === 'any') || (housingTypeElem.value === offer.offer.type);
     }
@@ -61,14 +60,14 @@
       }
     }
     function HousingFeaturesFilter(offer) {
-      var isFeature = 0;
-      var housingFeaturesArray = housingFeaturesElem.querySelectorAll('.feature>input[type="checkbox"]:checked');
-      housingFeaturesArray.forEach(function (feature) {
-        if (offer.offer.features.indexOf(feature.value) !== -1) {
-          isFeature++;
-        }
+      var housingFeaturesArray = Array.prototype.slice.call(housingFeaturesElem.querySelectorAll('.feature>input[type="checkbox"]:checked'));
+      if (housingFeaturesArray.length === 0) {
+        return true;
+      }
+      var hasFeature = housingFeaturesArray.filter(function (f) {
+        return offer.offer.features.indexOf(f.value) !== -1;
       });
-      return isFeature === housingFeaturesArray.length;
+      return hasFeature.length === housingFeaturesArray.length;
     }
   }
   function setMapEventListeners() {
