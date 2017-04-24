@@ -50,6 +50,15 @@ window.card = (function () {
       lodgeInfoElement.querySelector('.lodge__features').appendChild(span);
     }
     lodgeInfoElement.querySelector('.lodge__description').textContent = lodge.offer.description;
+
+    var fragment = document.createDocumentFragment();
+    for (i = 0; i < lodge.offer.photos.length; i++) {
+      var img = document.createElement('img');
+      img.src = lodge.offer.photos[i];
+      fragment.appendChild(img);
+    }
+    lodgeInfoElement.querySelector('.lodge__photos').appendChild(fragment);
+
     return lodgeInfoElement;
   }
 // Показываем блок информации о квартире
