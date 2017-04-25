@@ -44,12 +44,19 @@ window.card = (function () {
     lodgeInfoElement.querySelector('.lodge__type').textContent = getLodgeTypeName(lodge.offer.type);
     lodgeInfoElement.querySelector('.lodge__rooms-and-guests').textContent = getGuestRoomString(lodge.offer.guests, lodge.offer.rooms);
     lodgeInfoElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + lodge.offer.checkin + ', выезд до ' + lodge.offer.checkout;
-    for (var i = 0; i < lodge.offer.features.length; i++) {
+    lodge.offer.features.forEach(function (feature) {
       var span = document.createElement('span');
-      span.className = 'feature__image feature__image--' + lodge.offer.features[i];
+      span.className = 'feature__image feature__image--' + feature;
       lodgeInfoElement.querySelector('.lodge__features').appendChild(span);
-    }
+    });
     lodgeInfoElement.querySelector('.lodge__description').textContent = lodge.offer.description;
+    var fragment = document.createDocumentFragment();
+    lodge.offer.photos.forEach(function (photo) {
+      var img = document.createElement('img');
+      img.src = photo;
+      fragment.appendChild(img);
+    });
+    lodgeInfoElement.querySelector('.lodge__photos').appendChild(fragment);
     return lodgeInfoElement;
   }
 // Показываем блок информации о квартире

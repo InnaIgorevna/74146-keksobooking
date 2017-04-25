@@ -672,6 +672,11 @@ select option:hover {
   border: 1px solid #343434;
 }
 
+.lodge__photos img{
+  width: 52px;
+  height: 42px;
+}
+
 .hidden{
   display: none;
 }

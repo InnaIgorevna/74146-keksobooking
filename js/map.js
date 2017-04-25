@@ -1,8 +1,8 @@
 'use strict';
 (function () {
-  // Мы пробегаем по массиву с объявлениями квартиры, получаем pin с нужными данными. Накапливаем во фрагменте(буфере) пины,
-// а потом их всех добавляем на карту
+  var MAX_START_OFFERS = 3;
   var getOffersURL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
+  var filteredOffers = [];
   function onLoadError(response) {
     var tokyoMap = document.querySelector('.tokyo');
     var errorPopup = document.createElement('div');
@@ -11,20 +11,66 @@
     tokyoMap.appendChild(errorPopup);
   }
   function onLoadSuccess(response) {
-    var pinMap = document.querySelector('.tokyo__pin-map');
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < response.length; i++) {
-      fragment.appendChild(window.pin.createPin(response[i].location.x, response[i].location.y, response[i].author.avatar, i));
+    filteredOffers = response || [];
+    updateOffers(response.slice(0, MAX_START_OFFERS));
+    setMapEventListeners();
+    var housingTypeElem = document.getElementById('housing_type');
+    var guestRoomNumberElem = document.getElementById('housing_room-number');
+    var housingGuestsNumberElem = document.getElementById('housing_guests-number');
+    var housingPriceElem = document.getElementById('housing_price');
+    var housingFeaturesElem = document.getElementById('housing_features');
+    housingTypeElem.addEventListener('change', showFilteredOffers);
+    guestRoomNumberElem.addEventListener('change', showFilteredOffers);
+    housingGuestsNumberElem.addEventListener('change', showFilteredOffers);
+    housingPriceElem.addEventListener('change', showFilteredOffers);
+    housingFeaturesElem.addEventListener('change', showFilteredOffers);
+    function showFilteredOffers() {
+      filteredOffers = filterOffers(response);
+      updateOffers(filteredOffers);
     }
-    pinMap.appendChild(fragment);
-    // Активируем первый пин
-    window.pin.activatePin(document.querySelector('.pin[data-id="0"]'));
-    function activatePinAndShowInfo(pin) {
-      window.pin.activatePin(pin);
-      // Отображаем левый блок с информацией объявления выбранного pin
-      window.card.showDialog(response[window.pin.getActivePin().getAttribute('data-id')]);
+    function filterOffers(offerList) {
+      return offerList.filter(HousingTypeFilter)
+        .filter(RoomNumberFilter)
+        .filter(GuestsNumberFilter)
+        .filter(HousingPriceFilter)
+        .filter(HousingFeaturesFilter);
     }
+    function HousingTypeFilter(offer) {
+      return (housingTypeElem.value === 'any') || (housingTypeElem.value === offer.offer.type);
+    }
+    function RoomNumberFilter(offer) {
+      return (guestRoomNumberElem.value === 'any') || (+guestRoomNumberElem.value === offer.offer.rooms);
+    }
+    function GuestsNumberFilter(offer) {
+      return (housingGuestsNumberElem.value === 'any') || (+housingGuestsNumberElem.value === offer.offer.guests);
+    }
+    function HousingPriceFilter(offer) {
+      var priceDict = {
+        low: 10000,
+        high: 50000
+      };
+      if (housingPriceElem.value === 'low') {
+        return offer.offer.price < priceDict.low;
+      }
+      if (housingPriceElem.value === 'high') {
+        return offer.offer.price > priceDict.high;
+      }
+      return offer.offer.price >= priceDict.low && offer.offer.price <= priceDict.high;
+    }
+    function HousingFeaturesFilter(offer) {
+      var housingFeaturesArray = Array.prototype.slice.call(housingFeaturesElem.querySelectorAll('.feature>input[type="checkbox"]:checked'));
+      if (!housingFeaturesArray.length) {
+        return true;
+      }
+      var currentFeatures = housingFeaturesArray.filter(function (f) {
+        return offer.offer.features.indexOf(f.value) !== -1;
+      });
+      return currentFeatures.length === housingFeaturesArray.length;
+    }
+  }
+  function setMapEventListeners() {
     // добавляем обработчик событий на карту.Если нажат ENTER на картинке пина - активируем пин
+    var pinMap = document.querySelector('.tokyo__pin-map');
     pinMap.addEventListener('keydown', function (evt) {
       if (evt.keyCode === window.offers.ENTER_KEY_CODE && evt.target.parentNode.classList.contains('pin')) {
         activatePinAndShowInfo(evt.target.parentNode);
@@ -41,6 +87,35 @@
         }
       }
     });
+  }
+  function activatePinAndShowInfo(pin) {
+    if (!pin.classList.contains('pin__main')) {
+      window.pin.activatePin(pin);
+      // Отображаем левый блок с информацией объявления выбранного pin
+      window.card.showDialog(filteredOffers[window.pin.getActivePin().getAttribute('data-id')]);
+    }
+  }
+  function clearOffers() {
+    window.card.hideDialog();
+    window.pin.deactivatePin();
+    var pinMap = document.querySelector('.tokyo__pin-map');
+    var offerPins = pinMap.querySelectorAll('.pin:not(.pin__main)');
+    offerPins.forEach(function (pin) {
+      pinMap.removeChild(pin);
+    });
+  }
+  function updateOffers(pins) {
+    var pinMap = document.querySelector('.tokyo__pin-map');
+    var fragment = document.createDocumentFragment();
+    pins.forEach(function (pin, i) {
+      fragment.appendChild(window.pin.createPin(pin.location.x, pin.location.y, pin.author.avatar, i));
+    });
+    clearOffers();
+    pinMap.appendChild(fragment);
+    // Активируем первый пин
+    if (pins.length > 0) {
+      activatePinAndShowInfo(document.querySelector('.pin[data-id="0"]'));
+    }
   }
   window.load(getOffersURL, onLoadSuccess, onLoadError);
   var mainPinWidth = 74;
