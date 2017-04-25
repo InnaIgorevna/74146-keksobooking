@@ -3,7 +3,6 @@
   var MAX_START_OFFERS = 3;
   var getOffersURL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
   var filteredOffers = [];
-  var offers = [];
   function onLoadError(response) {
     var tokyoMap = document.querySelector('.tokyo');
     var errorPopup = document.createElement('div');
@@ -12,9 +11,8 @@
     tokyoMap.appendChild(errorPopup);
   }
   function onLoadSuccess(response) {
-    offers = response;
-    filteredOffers = offers;
-    updateOffers(filteredOffers.slice(0, MAX_START_OFFERS));
+    filteredOffers = response || [];
+    updateOffers(response.slice(0, MAX_START_OFFERS));
     setMapEventListeners();
     var housingTypeElem = document.getElementById('housing_type');
     var guestRoomNumberElem = document.getElementById('housing_room-number');
@@ -27,7 +25,7 @@
     housingPriceElem.addEventListener('change', showFilteredOffers);
     housingFeaturesElem.addEventListener('change', showFilteredOffers);
     function showFilteredOffers() {
-      filteredOffers = filterOffers(offers);
+      filteredOffers = filterOffers(response);
       updateOffers(filteredOffers);
     }
     function filterOffers(offerList) {
@@ -53,21 +51,21 @@
       };
       if (housingPriceElem.value === 'low') {
         return offer.offer.price < priceDict.low;
-      } else if (housingPriceElem.value === 'high') {
-        return offer.offer.price > priceDict.high;
-      } else {
-        return offer.offer.price >= priceDict.low && offer.offer.price <= priceDict.high;
       }
+      if (housingPriceElem.value === 'high') {
+        return offer.offer.price > priceDict.high;
+      }
+      return offer.offer.price >= priceDict.low && offer.offer.price <= priceDict.high;
     }
     function HousingFeaturesFilter(offer) {
       var housingFeaturesArray = Array.prototype.slice.call(housingFeaturesElem.querySelectorAll('.feature>input[type="checkbox"]:checked'));
-      if (housingFeaturesArray.length === 0) {
+      if (!housingFeaturesArray.length) {
         return true;
       }
-      var hasFeature = housingFeaturesArray.filter(function (f) {
+      var currentFeatures = housingFeaturesArray.filter(function (f) {
         return offer.offer.features.indexOf(f.value) !== -1;
       });
-      return hasFeature.length === housingFeaturesArray.length;
+      return currentFeatures.length === housingFeaturesArray.length;
     }
   }
   function setMapEventListeners() {
@@ -109,9 +107,9 @@
   function updateOffers(pins) {
     var pinMap = document.querySelector('.tokyo__pin-map');
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < pins.length; i++) {
-      fragment.appendChild(window.pin.createPin(pins[i].location.x, pins[i].location.y, pins[i].author.avatar, i));
-    }
+    pins.forEach(function (pin, i) {
+      fragment.appendChild(window.pin.createPin(pin.location.x, pin.location.y, pin.author.avatar, i));
+    });
     clearOffers();
     pinMap.appendChild(fragment);
     // Активируем первый пин
