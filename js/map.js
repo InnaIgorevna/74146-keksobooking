@@ -11,14 +11,16 @@
     tokyoMap.appendChild(errorPopup);
   }
   function onLoadSuccess(response) {
-    filteredOffers = response || [];
-    updateOffers(response.slice(0, MAX_START_OFFERS));
-    setMapEventListeners();
     var housingTypeElem = document.getElementById('housing_type');
     var guestRoomNumberElem = document.getElementById('housing_room-number');
     var housingGuestsNumberElem = document.getElementById('housing_guests-number');
     var housingPriceElem = document.getElementById('housing_price');
     var housingFeaturesElem = document.getElementById('housing_features');
+    filteredOffers = filterOffers(response);
+    updateOffers(filteredOffers.sort(function () {
+      return 0.5 - Math.random();
+    }).slice(0, MAX_START_OFFERS));
+    setMapEventListeners();
     housingTypeElem.addEventListener('change', showFilteredOffers);
     guestRoomNumberElem.addEventListener('change', showFilteredOffers);
     housingGuestsNumberElem.addEventListener('change', showFilteredOffers);
@@ -112,9 +114,9 @@
     });
     clearOffers();
     pinMap.appendChild(fragment);
-    // Активируем первый пин
+    var firstPin = document.querySelector('.pin[data-id="0"]');
     if (pins.length > 0) {
-      activatePinAndShowInfo(document.querySelector('.pin[data-id="0"]'));
+      activatePinAndShowInfo(firstPin);
     }
   }
   window.load(getOffersURL, onLoadSuccess, onLoadError);
@@ -144,10 +146,11 @@
       var mainPinPikeY = y + mainPinHeight;
       var maxMapX = 1200;
       var maxMapY = 665;
+      var minMapY = 150;
       if (mainPinPikeX > 0 && mainPinPikeX < maxMapX) {
         mainPin.style.left = x + 'px';
       }
-      if (mainPinPikeY > 0 && mainPinPikeY < maxMapY) {
+      if (mainPinPikeY > minMapY && mainPinPikeY < maxMapY) {
         mainPin.style.top = y + 'px';
       }
       window.mainOffer.setAddress(mainPinPikeX, mainPinPikeY);
