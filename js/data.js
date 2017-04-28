@@ -34,7 +34,7 @@ window.offers = (function () {
   var getRandom = function (min, max) {
     return Math.floor(min + Math.random() * (max - min));
   };
-// Возвращает рандомный элемет массива
+  // Возвращает рандомный элемет массива
   var getRandomArrayElement = function (arr) {
     return arr[getRandom(0, arr.length)];
   };
